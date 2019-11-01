@@ -73,6 +73,7 @@ if __name__ == '__main__':
         print("ERROR: You must change your name in `my_id.txt`!")
         exit()
     # Run forever until interrupted
+    data = {}
     while True:
         try:
             r = requests.get(url=node + "/last_proof")
