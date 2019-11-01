@@ -34,7 +34,7 @@ def proof_of_work(last_proof):
     proof = random.randint(-sys.maxsize, sys.maxsize//2**48)
 
     while not valid_proof(last_hex_hash, proof):
-        proof += random.randint(2**8, 2**16)
+        proof += 5545320
 
     print("Proof found: " + str(proof) + " in " + str(timer() - start))
     return proof
