@@ -1,17 +1,15 @@
-#  Hint:  You may not need all of these.  Remove the unused functions.
-from hashtables import (HashTable,
-                        hash_table_insert,
-                        hash_table_remove,
-                        hash_table_retrieve,
-                        hash_table_resize)
-
-
 def get_indices_of_item_weights(weights, length, limit):
-    ht = HashTable(16)
+    i = 0
+    j = length - 1
 
-    """
-    YOUR CODE HERE
-    """
+    while(i < j):
+        lhs = weights[i]
+        rhs = weights[j]
+        if lhs + rhs == limit:
+            return (i, j) if i > j else (j, i)
+
+        i += 1
+        j -= 1
 
     return None
 
