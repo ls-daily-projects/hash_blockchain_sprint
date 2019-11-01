@@ -7,6 +7,8 @@ from uuid import uuid4
 
 from timeit import default_timer as timer
 
+from json.decoder import JSONDecodeError
+
 import random
 
 
@@ -23,9 +25,16 @@ def proof_of_work(last_proof):
 
     start = timer()
 
+    last_proof_string = str(last_proof).encode()
+    last_hex_hash = hashlib.sha256(last_proof_string).hexdigest()
+
     print("Searching for next proof")
-    proof = 0
-    #  TODO: Your code here
+
+    proof = start
+    proof = random.randint(-sys.maxsize, sys.maxsize//2**48)
+
+    while not valid_proof(last_hex_hash, proof):
+        proof += random.randint(2**8, 2**16)
 
     print("Proof found: " + str(proof) + " in " + str(timer() - start))
     return proof
@@ -38,9 +47,11 @@ def valid_proof(last_hash, proof):
 
     IE:  last_hash: ...AE9123456, new hash 123456888...
     """
-
-    # TODO: Your code here!
-    pass
+    guess = f"{proof}".encode()
+    guess_hex_hash = hashlib.sha256(guess).hexdigest()
+    last_hash_last_6 = last_hash[-6:]
+    guess_hash_first_6 = guess_hex_hash[:6]
+    return guess_hash_first_6 == last_hash_last_6
 
 
 if __name__ == '__main__':
@@ -53,7 +64,7 @@ if __name__ == '__main__':
     coins_mined = 0
 
     # Load or create ID
-    f = open("my_id.txt", "r")
+    f = open("blockchain/my_id.txt", "r")
     id = f.read()
     print("ID is", id)
     f.close()
@@ -72,9 +83,13 @@ if __name__ == '__main__':
                      "id": id}
 
         r = requests.post(url=node + "/mine", json=post_data)
-        data = r.json()
-        if data.get('message') == 'New Block Forged':
-            coins_mined += 1
-            print("Total coins mined: " + str(coins_mined))
-        else:
-            print(data.get('message'))
+        try:
+            data = r.json()
+        except JSONDecodeError as error:
+            print(error)
+        finally:
+            if data.get('message') == 'New Block Forged':
+                coins_mined += 1
+                print("Total coins mined: " + str(coins_mined))
+            else:
+                print(data.get('message'))
