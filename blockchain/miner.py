@@ -74,16 +74,15 @@ if __name__ == '__main__':
         exit()
     # Run forever until interrupted
     while True:
-        # Get the last proof from the server
-        r = requests.get(url=node + "/last_proof")
-        data = r.json()
-        new_proof = proof_of_work(data.get('proof'))
-
-        post_data = {"proof": new_proof,
-                     "id": id}
-
-        r = requests.post(url=node + "/mine", json=post_data)
         try:
+            r = requests.get(url=node + "/last_proof")
+            data = r.json()
+            new_proof = proof_of_work(data.get('proof'))
+
+            post_data = {"proof": new_proof,
+                         "id": id}
+
+            r = requests.post(url=node + "/mine", json=post_data)
             data = r.json()
         except JSONDecodeError as error:
             print(error)
